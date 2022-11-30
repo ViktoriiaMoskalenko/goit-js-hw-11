@@ -3,46 +3,39 @@ import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { getImage } from './getImg';
+import { observer, page, onLoad } from './onLoad';
 
 const gallery = document.querySelector('.gallery');
 const form = document.querySelector('.search-form');
+const btn = document.querySelector('.search-form > button');
 const guard = document.querySelector('.js-guard');
-const loadBtn = document.querySelector('.load-more');
 
 form.addEventListener('submit', onSearchImg);
 
-let page = 1;
-let per_page = 40;
+let per_page = 100;
+let value = '';
 
-export { page, per_page };
+export { per_page, value, gallery, createMarkup, galleryImg, guard };
 
-const options = {
-  root: null,
-  rootMargin: '300px',
-  threshold: 1.0,
-};
-
-const observer = new IntersectionObserver(onLoad, options);
-
-function onLoad(entries, observer) {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      page += 1;
-      getImage(form.searchQuery.value, page).then(data => {
-        gallery.insertAdjacentHTML('beforeend', createMarkup(data.hits));
-        galleryImg.refresh();
-        if (Number(page * per_page) >= data.totalHits) {
-          observer.unobserve(guard);
-        }
-      });
-    }
+btn.onclick = () => {
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: 'auto',
   });
-}
+};
 
 function onSearchImg(e) {
   e.preventDefault();
-  getImage(form.searchQuery.value)
+  value = form.searchQuery.value;
+  getImage(value)
     .then(data => {
+      if (data.hits.length === 0) {
+        gallery.innerHTML = '';
+        return Notiflix.Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+      }
       page = 1;
       gallery.innerHTML = '';
       Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images`);
