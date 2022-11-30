@@ -12,7 +12,7 @@ const guard = document.querySelector('.js-guard');
 
 form.addEventListener('submit', onSearchImg);
 
-let per_page = 100;
+let per_page = 40;
 let value = '';
 
 export { per_page, value, gallery, createMarkup, galleryImg, guard };
