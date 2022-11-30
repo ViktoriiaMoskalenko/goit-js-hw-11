@@ -36,7 +36,7 @@ function onSearchImg(e) {
           'Sorry, there are no images matching your search query. Please try again.'
         );
       }
-      page = 1;
+
       gallery.innerHTML = '';
       Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images`);
       gallery.insertAdjacentHTML('beforeend', createMarkup(data.hits));
